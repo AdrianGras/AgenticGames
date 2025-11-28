@@ -1,12 +1,18 @@
-from engine.core_engine import CoreEngine
+from enum import Enum, auto
+from engine.core_engine import CoreEngine, GameStatus
 from abc import abstractmethod
+
+class LevelLogicResult(Enum):
+    CONTINUE = auto()
+    COMPLETED = auto()
+    FAILED = auto()
 
 class LevelBasedEngine(CoreEngine):
     def __init__(self):
         super().__init__()
         self.name = "Level Based Engine"
-        self.current_level_index = 0
         self.max_unloecked_level = 0
+        self.start_level(0)
 
     @property
     @abstractmethod
@@ -15,14 +21,31 @@ class LevelBasedEngine(CoreEngine):
         Returns the maximum level index for the game.
         """
         return 0
+    
+    @abstractmethod
+    def get_level_observation(self):
+        """
+        Returns the observation for the current level.
+        """
+        obs = f"\nYou are currently at level {self.current_level_index + 1}."
+        return obs
 
     def get_initial_observation(self):
         """
         Returns the initial observation presented to the user.
         """
         initial_obs = super().get_initial_observation()
-        initial_obs += f"\nYou are currently at level {self.current_level_index + 1}."
+        initial_obs += self.get_level_observation()
+
         return initial_obs
+    
+    @abstractmethod
+    def start_level(self, level_index):
+        """
+        Initializes the specified level.
+        """
+        self.current_level_index = level_index
+
     
     def get_instructions(self):
         """
@@ -42,27 +65,46 @@ class LevelBasedEngine(CoreEngine):
             command_parts = input_data.split()
             command = command_parts[0]
 
+            requested_level = None
             if command == '/repeat':
-                level_to_play = self.current_level_index - 1
+                requested_level = self.current_level_index - 1
             elif command == '/level' and len(command_parts) > 1:
                 try:
                     requested_level = int(command_parts[1]) - 1
                 except ValueError:
                     return "Invalid level number."
-                
-            if requested_level > self.max_level_index or requested_level < 0:
-                return f"Level {requested_level + 1} does not exist."
-            elif requested_level > self.max_unloecked_level:
-                return f"Level {requested_level + 1} is not unlocked yet."
-            
+            else:
+                return "Unknown command."
             return self.change_level(requested_level)  
+
+        level_status = self.apply_level_logic(input_data)
+
+        match level_status:
+            case LevelLogicResult.COMPLETED:
+                if self.current_level_index == self.max_level_index:
+                    self.game_status = GameStatus.FINISHED
+                    return "Congratulations! You have completed the final level of the game."
+                self.max_unloecked_level = max(self.max_unloecked_level, self.current_level_index + 1)
+                self.start_level(self.current_level_index + 1)
+                return self.get_level_observation()
             
-        else:
-            return "Unknown command."
-        
-        # TO DO
+            case LevelLogicResult.CONTINUE:
+                return self.get_level_observation()
+            
+            case LevelLogicResult.FAILED:
+                self.game_status = GameStatus.FAILED
+                return "You have failed the Game. Better luck next time!"
+
         return 
     
     def change_level(self, new_level_index):
-        # TO DO
-        pass
+        if new_level_index > self.max_level_index or new_level_index < 0:
+            return f"Level {new_level_index + 1} does not exist."
+        if new_level_index > self.max_unloecked_level:
+            return f"Level {new_level_index + 1} is not unlocked yet."
+        
+        self.start_level(new_level_index)
+        return self.get_level_observation()
+    
+    
+        

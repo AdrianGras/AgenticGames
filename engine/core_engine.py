@@ -1,8 +1,15 @@
 from abc import ABC, abstractmethod
+from enum import Enum, auto
+
+class GameStatus(Enum):
+    RUNNING = auto()
+    FINISHED = auto()
+    FAILED = auto()
 
 class CoreEngine(ABC):
     def __init__(self):
         self.name = "Core Engine"
+        self.game_status = GameStatus.RUNNING
         self.input_history = []
         self.observation_history = []
 
@@ -56,3 +63,9 @@ class CoreEngine(ABC):
         print(f"== Observations for {self.name} ==")
         for i, obs in enumerate(self.observation_history[-n_last:], start=1):
             print(f"{i}. {obs}")
+
+    def get_game_status(self):
+        """
+        Returns the current game status.
+        """
+        return self.game_status
