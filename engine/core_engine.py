@@ -1,0 +1,58 @@
+from abc import ABC, abstractmethod
+
+class CoreEngine(ABC):
+    def __init__(self):
+        self.name = "Core Engine"
+        self.input_history = []
+        self.observation_history = []
+
+    def start(self):
+        initial_obs = self.get_initial_observation()
+        self.observation_history.append(initial_obs)
+        return initial_obs
+
+    def step(self, input_data):
+        self.input_history.append(input_data)
+        self.verify_input(input_data)
+        new_obs = self.process_input(input_data)
+        self.observation_history.append(new_obs)
+        return new_obs
+    
+    def get_initial_observation(self):
+        """
+        Returns the initial observation presented to the user.
+        """
+
+        initial_obs = f"Game {self.name} started"
+        initial_obs += "\n" + self.get_instructions()
+        return initial_obs
+    
+    @abstractmethod
+    def get_instructions(self):
+        """
+        Returns the game instructions.
+        """
+        return f"Insert game instructions here."
+
+    @abstractmethod
+    def verify_input(self, input_data):
+        """
+        Validates the input.
+        """
+        assert isinstance(input_data, str), "Input data must be a string"
+
+    @abstractmethod
+    def process_input(self, input_data):
+        """
+        Produces a new observation after receiving input.
+        """
+        return "Template observation after processing input."
+
+    @abstractmethod
+    def print_observations(self, n_last=5):
+        """
+        Prints the last recorded observations.
+        """
+        print(f"== Observations for {self.name} ==")
+        for i, obs in enumerate(self.observation_history[-n_last:], start=1):
+            print(f"{i}. {obs}")
