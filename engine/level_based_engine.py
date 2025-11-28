@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from engine.core_engine import CoreEngine, GameStatus
 from abc import abstractmethod
+import json
 
 class LevelLogicResult(Enum):
     CONTINUE = auto()
@@ -12,7 +13,18 @@ class LevelBasedEngine(CoreEngine):
         super().__init__()
         self.name = "Level Based Engine"
         self.max_unloecked_level = 0
+        self.load_game_configuration()
         self.start_level(0)
+
+    def load_game_configuration(self):
+        """
+        Loads the game configuration.
+        """
+        path = f"game_configs/{self.name.replace(' ', '_').lower()}.json"
+        with open(path, 'r') as f:
+            config = json.load(f)
+
+        self.level_configs = config.get("levels", [])
 
     @property
     @abstractmethod
@@ -20,7 +32,7 @@ class LevelBasedEngine(CoreEngine):
         """
         Returns the maximum level index for the game.
         """
-        return 0
+        return len(self.level_configs) - 1
     
     @abstractmethod
     def get_level_observation(self):
