@@ -1,5 +1,7 @@
 from engine.level_based_engine import LevelBasedEngine, LevelLogicResult
 
+from .sequence_character import LetterA, LetterB
+
 class MisterySecuences(LevelBasedEngine):
     def __init__(self):
         super().__init__()
@@ -14,4 +16,5 @@ class MisterySecuences(LevelBasedEngine):
 
         level_character_layout = self.level_configs[level_index].get("layout", [])
 
+        
 
