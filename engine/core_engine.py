@@ -8,7 +8,6 @@ class GameStatus(Enum):
 
 class CoreEngine(ABC):
     def __init__(self):
-        self.name = "Core Engine"
         self.game_status = GameStatus.RUNNING
         self.input_history = []
         self.observation_history = []
@@ -34,6 +33,14 @@ class CoreEngine(ABC):
         initial_obs += "\n" + self.get_instructions()
         return initial_obs
     
+    @property
+    @abstractmethod
+    def name(self):
+        """
+        Returns the name of the game.
+        """
+        return "Template Game"
+
     @abstractmethod
     def get_instructions(self):
         """
@@ -55,7 +62,7 @@ class CoreEngine(ABC):
         """
         return "Template observation after processing input."
 
-    @abstractmethod
+
     def print_observations(self, n_last=5):
         """
         Prints the last recorded observations.

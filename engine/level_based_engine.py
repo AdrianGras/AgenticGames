@@ -11,7 +11,6 @@ class LevelLogicResult(Enum):
 class LevelBasedEngine(CoreEngine):
     def __init__(self):
         super().__init__()
-        self.name = "Level Based Engine"
         self.max_unlocked_level = 0
         self.load_game_configuration()
         self.start_level(0)
@@ -27,7 +26,6 @@ class LevelBasedEngine(CoreEngine):
         self.level_configs = config.get("levels", [])
 
     @property
-    @abstractmethod
     def max_level_index(self):
         """
         Returns the maximum level index for the game.
@@ -79,6 +77,32 @@ class LevelBasedEngine(CoreEngine):
         """
         return LevelLogicResult.CONTINUE
     
+    def _handle_completed(self):
+        if self.current_level_index == self.max_level_index:
+            self.game_status = GameStatus.FINISHED
+            return "Congratulations! You have completed the final level of the game."
+
+        self.max_unlocked_level = max(
+            self.max_unlocked_level, 
+            self.current_level_index + 1
+        )
+        return self.change_level(self.current_level_index + 1)
+
+
+    def _handle_continue(self):
+        return self.get_level_observation()
+
+
+    def _handle_failed(self):
+        self.game_status = GameStatus.FAILED
+        return "You have failed the Game. Better luck next time!"
+
+    HANDLERS = {
+            LevelLogicResult.COMPLETED: _handle_completed,
+            LevelLogicResult.CONTINUE: _handle_continue,
+            LevelLogicResult.FAILED: _handle_failed,
+        }
+
     def process_input(self, input_data):
         if input_data[0] == '/':
             command_parts = input_data.split()
@@ -98,25 +122,9 @@ class LevelBasedEngine(CoreEngine):
 
         level_status = self.apply_level_logic(input_data)
 
-        match level_status:
-            case LevelLogicResult.COMPLETED:
-                if self.current_level_index == self.max_level_index:
-                    self.game_status = GameStatus.FINISHED
-                    return "Congratulations! You have completed the final level of the game."
-                self.max_unlocked_level = max(self.max_unlocked_level, self.current_level_index + 1)
-                self.start_level(self.current_level_index + 1)
-                return self.get_level_observation()
-            
-            case LevelLogicResult.CONTINUE:
-                return self.get_level_observation()
-            
-            case LevelLogicResult.FAILED:
-                self.game_status = GameStatus.FAILED
-                return "You have failed the Game. Better luck next time!"
-            
-
-        return 
-    
+        return self.HANDLERS.get(level_status)(self)
+        
+                
     def change_level(self, new_level_index):
         if new_level_index > self.max_level_index or new_level_index < 0:
             return f"Level {new_level_index + 1} does not exist."
