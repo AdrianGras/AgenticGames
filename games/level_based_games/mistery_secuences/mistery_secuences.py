@@ -14,7 +14,26 @@ class MisterySecuences(LevelBasedEngine):
     def start_level(self, level_index):
         super().start_level(level_index)
 
-        level_character_layout = self.level_configs[level_index].get("layout", [])
+        self.string_layout = self.level_configs[level_index].get("layout", [])
+        level_character_layout = []
+        for i, char in enumerate(self.string_layout):
+            match char:
+                case "A":
+                    level_character_layout.append(LetterA(i))
+                case "B":
+                    level_character_layout.append(LetterB(i))
+                
+        self.level_character_layout = level_character_layout
 
-        
-
+    def get_level_observation(self):
+        obs = super().get_level_observation()
+        obs += "\nCurrent sequence: " + " ".join(self.string_layout)
+        return obs
+    
+    def apply_level_logic(self, input_data):
+        for character in self.level_character_layout:
+            if not character.process_input(input_data):
+                return LevelLogicResult.CONTINUE
+                
+        return LevelLogicResult.COMPLETED
+                

@@ -72,6 +72,13 @@ class LevelBasedEngine(CoreEngine):
             "4. Add /level n at the beginning of your input to jump to level n if unlocked.\n"
         )
     
+    @abstractmethod
+    def apply_level_logic(self, input_data):
+        """
+        Applies the level logic based on the input data.
+        """
+        return LevelLogicResult.CONTINUE
+    
     def process_input(self, input_data):
         if input_data[0] == '/':
             command_parts = input_data.split()
