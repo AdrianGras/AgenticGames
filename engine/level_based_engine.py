@@ -12,7 +12,7 @@ class LevelBasedEngine(CoreEngine):
     def __init__(self):
         super().__init__()
         self.name = "Level Based Engine"
-        self.max_unloecked_level = 0
+        self.max_unlocked_level = 0
         self.load_game_configuration()
         self.start_level(0)
 
@@ -96,7 +96,7 @@ class LevelBasedEngine(CoreEngine):
                 if self.current_level_index == self.max_level_index:
                     self.game_status = GameStatus.FINISHED
                     return "Congratulations! You have completed the final level of the game."
-                self.max_unloecked_level = max(self.max_unloecked_level, self.current_level_index + 1)
+                self.max_unlocked_level = max(self.max_unlocked_level, self.current_level_index + 1)
                 self.start_level(self.current_level_index + 1)
                 return self.get_level_observation()
             
@@ -106,13 +106,14 @@ class LevelBasedEngine(CoreEngine):
             case LevelLogicResult.FAILED:
                 self.game_status = GameStatus.FAILED
                 return "You have failed the Game. Better luck next time!"
+            
 
         return 
     
     def change_level(self, new_level_index):
         if new_level_index > self.max_level_index or new_level_index < 0:
             return f"Level {new_level_index + 1} does not exist."
-        if new_level_index > self.max_unloecked_level:
+        if new_level_index > self.max_unlocked_level:
             return f"Level {new_level_index + 1} is not unlocked yet."
         
         self.start_level(new_level_index)
