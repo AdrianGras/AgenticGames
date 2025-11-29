@@ -8,6 +8,9 @@
         {
             "name": "Main",
             "type": "debugpy",
+            "args": [
+                "mistery_sequences"
+            ],
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",

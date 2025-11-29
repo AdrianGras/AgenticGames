@@ -1,4 +1,4 @@
-from engine.level_based_engine import LevelBasedEngine, LevelLogicResult
+from game_engine.level_based_engine import LevelBasedEngine, LevelLogicResult
 
 from .sequence_character import LetterA, LetterB
 

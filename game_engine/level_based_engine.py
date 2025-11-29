@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from engine.core_engine import CoreEngine, GameStatus
+from game_engine.core_engine import CoreEngine, GameStatus
 from abc import abstractmethod
 import json
 
