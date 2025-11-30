@@ -3,7 +3,7 @@ import os
 import json
 
 class GeneralLLM(ABC):
-    def __init__(self, system_prompt_id = "default"):
+    def __init__(self):
         super().__init__()
         api_key = self.load_api_credentials()
         self.client = self.generate_client(api_key)
@@ -37,5 +37,13 @@ class GeneralLLM(ABC):
     def chat_completion(self, message_history, system_prompt, temperature=0.7, max_tokens=150):
         """
         Generates a chat completion based on the message history and system prompt.
+        Args:
+            message_history (list): List of dicts with 'role' and 'content' keys.
+            system_prompt (str): System instructions for the LLM.
+            temperature (float): Sampling temperature.
+            max_tokens (int): Maximum tokens in the response.
+        
+        Returns:
+            str: The generated response from the LLM.
         """
         pass
