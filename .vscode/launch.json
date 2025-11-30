@@ -1,20 +1,49 @@
 {
-    // Use IntelliSense para saber los atributos posibles.
-    // Mantenga el puntero para ver las descripciones de los existentes atributos.
-    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "Main",
+            "name": "Agent player",
             "type": "debugpy",
-            "args": [
-                "mistery_sequences"
-            ],
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--game", "${input:gameName}",
+                "--agent", "${input:agentName}"
+            ]
+        },
+        {
+            "name": "user player",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--game", "${input:gameName}",
+                "--user_input"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "gameName",
+            "description": "Elige el juego",
+            "type": "pickString",
+            "options": [
+                "mistery_sequences",
+            ],
+            "default": "mistery_sequences"
+        },
+        {
+            "id": "agentName",
+            "description": "Elige el agente",
+            "type": "pickString",
+            "options": [
+                "basic_agent",
+            ],
+            "default": "basic_agent"
         }
     ]
 }
