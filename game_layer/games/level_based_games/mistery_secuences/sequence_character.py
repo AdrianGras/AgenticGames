@@ -39,3 +39,10 @@ class LetterB(Letter):
 class LetterX(Letter):
     def check_sequence(self, sequence):
         return sequence[self.position] != 1
+    
+
+CHAR_MAP = {
+    "A": LetterA,
+    "B": LetterB,
+    "X": LetterX,
+}

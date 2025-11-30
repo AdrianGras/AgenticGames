@@ -1,4 +1,4 @@
-from games.level_based_games.mistery_secuences.mistery_secuences import MisterySecuences
+from game_layer.games.level_based_games.mistery_secuences.mistery_secuences import MisterySecuences
 GAMES = {
     "mistery_sequences": MisterySecuences,
 }

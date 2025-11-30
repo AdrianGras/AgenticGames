@@ -63,13 +63,19 @@ class CoreEngine(ABC):
         return "Template observation after processing input."
 
 
-    def print_observations(self, n_last=5):
+    def get_full_history(self):        
         """
-        Prints the last recorded observations.
+        Returns the full history of observations and inputs.
         """
-        print(f"== Observations for {self.name} ==")
-        for i, obs in enumerate(self.observation_history[-n_last:], start=1):
-            print(f"{i}. {obs}")
+        out = ""
+        max_len = max(len(self.observation_history), len(self.input_history))
+        for i in range(max_len):
+            if i < len(self.observation_history):
+                out += f"Observation {i}: {self.observation_history[i]}\n"
+            if i < len(self.input_history):
+                out += f"Input {i}: {self.input_history[i]}\n"
+            out += "\n"
+        return out
 
     def get_game_status(self):
         """

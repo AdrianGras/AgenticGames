@@ -1,6 +1,5 @@
-from game_engine.level_based_engine import LevelBasedEngine, LevelLogicResult
-
-from .sequence_character import LetterA, LetterB
+from game_layer.game_engine.level_based_engine import LevelBasedEngine, LevelLogicResult
+from .sequence_character import CHAR_MAP
 
 class MisterySecuences(LevelBasedEngine):
     def __init__(self):
@@ -16,10 +15,6 @@ class MisterySecuences(LevelBasedEngine):
         self.string_layout = self.level_configs[level_index].get("layout", [])
         level_character_layout = []
 
-        CHAR_MAP = {
-            "A": LetterA,
-            "B": LetterB,
-        }
         for i, char in enumerate(self.string_layout):
             if char in CHAR_MAP:
                 character_instance = CHAR_MAP[char](position=i)
@@ -29,7 +24,10 @@ class MisterySecuences(LevelBasedEngine):
 
     def get_level_observation(self):
         obs = super().get_level_observation()
-        obs += "\nCurrent sequence: " + " ".join(self.string_layout)
+        if self.steps_in_current_level > 0:
+            obs += "\nWrong answer, try again."
+        else:
+            obs += "\nCurrent sequence: " + " ".join(self.string_layout)
         return obs
     
     def apply_level_logic(self, input_data):
@@ -37,8 +35,12 @@ class MisterySecuences(LevelBasedEngine):
         for character in self.level_character_layout:
             if not character.check_sequence(input_data):
                 return LevelLogicResult.CONTINUE
-                
-        return LevelLogicResult.COMPLETED
+        
+        for x in input_data:
+            if x == 1:
+                return LevelLogicResult.COMPLETED
+            
+        return LevelLogicResult.CONTINUE
     
     def get_instructions(self):
         inst = super().get_instructions()
@@ -46,6 +48,7 @@ class MisterySecuences(LevelBasedEngine):
             "Welcome to the Mistery Secuences Game!\n"
             "In each level, you will be presented with a sequence of characters.\n"
             "Your answer must be a sequence of 0 and 1 with the same length, separated by spaces.\n"
+            "Example: '1 0 1 1 0'\n"
         )
         return inst
     
@@ -53,7 +56,7 @@ class MisterySecuences(LevelBasedEngine):
         super().verify_input(input_data)
         input_parts = input_data.split()
         if len(input_parts) != len(self.string_layout):
-            raise ValueError(f"Input must have {len(self.string_layout)} elements separated by spaces.")
+            raise ValueError(f"The length of the current sequence is {len(self.string_layout)}, and hence, your input must have {len(self.string_layout)} elements separated by spaces.")
         for part in input_parts:
             if part not in ["0", "1"]:
-                raise ValueError("Each element in the input must be either '0' or '1'.")
+                raise ValueError("Each element in the input must be either 0 or 1.")

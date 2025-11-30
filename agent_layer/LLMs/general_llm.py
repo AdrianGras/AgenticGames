@@ -13,14 +13,14 @@ class GeneralLLM(ABC):
         """
         Loads API credentials from environment variables.
         """
-        api_key = os.getenv(self.api_key_name)
+        api_key_name = self.get_api_key_name()
+        api_key = os.getenv(api_key_name)
         if not api_key:
-            raise ValueError(f"API key for {self.api_key_name} not found in environment variables.")
+            raise ValueError(f"API key for {api_key_name} not found in environment variables.")
         return api_key
     
     @abstractmethod
-    @property
-    def api_key_name(self):
+    def get_api_key_name(self):
         """
         Returns the name of the LLM model.
         """

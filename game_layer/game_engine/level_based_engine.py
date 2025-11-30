@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from game_engine.core_engine import CoreEngine, GameStatus
+from game_layer.game_engine.core_engine import CoreEngine, GameStatus
 from abc import abstractmethod
 import json
 
@@ -14,12 +14,13 @@ class LevelBasedEngine(CoreEngine):
         self.max_unlocked_level = 0
         self.load_game_configuration()
         self.start_level(0)
+        self.steps_in_current_level = 0
 
     def load_game_configuration(self):
         """
         Loads the game configuration.
         """
-        path = f"game_configs/{self.name.replace(' ', '_').lower()}.json"
+        path = f"game_layer/game_configs/{self.name.replace(' ', '_').lower()}.json"
         with open(path, 'r') as f:
             config = json.load(f)
 
@@ -37,7 +38,10 @@ class LevelBasedEngine(CoreEngine):
         """
         Returns the observation for the current level.
         """
-        obs = f"\nYou are currently at level {self.current_level_index + 1}."
+        if self.steps_in_current_level == 0:
+            obs = f"\nLevel {self.current_level_index + 1} started."
+        else:
+            obs = ""
         return obs
 
     def get_initial_observation(self):
@@ -86,10 +90,12 @@ class LevelBasedEngine(CoreEngine):
             self.max_unlocked_level, 
             self.current_level_index + 1
         )
+        self.steps_in_current_level = 0
         return self.change_level(self.current_level_index + 1)
 
 
     def _handle_continue(self):
+        self.steps_in_current_level += 1
         return self.get_level_observation()
 
 
