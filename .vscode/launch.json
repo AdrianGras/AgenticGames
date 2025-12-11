@@ -10,7 +10,8 @@
             "cwd": "${workspaceFolder}",
             "args": [
                 "--game", "${input:gameName}",
-                "--agent", "${input:agentName}"
+                "--agent", "${input:agentName}",
+                "--llm", "${input:llmName}"
             ]
         },
         {
@@ -22,14 +23,14 @@
             "cwd": "${workspaceFolder}",
             "args": [
                 "--game", "${input:gameName}",
-                "--user_input"
+                "--user_input",
             ]
         }
     ],
     "inputs": [
         {
             "id": "gameName",
-            "description": "Elige el juego",
+            "description": "Choose the game",
             "type": "pickString",
             "options": [
                 "mistery_sequences",
@@ -38,12 +39,24 @@
         },
         {
             "id": "agentName",
-            "description": "Elige el agente",
+            "description": "Choose the agent",
             "type": "pickString",
             "options": [
                 "basic_agent",
             ],
             "default": "basic_agent"
+        },
+        {
+            "id": "llmName",
+            "description": "Choose the LLM",
+            "type": "pickString",
+            "options": [
+                "gpt-4",
+                "gpt-5",
+                "grok-4",
+                "grok-4-1-fast",
+                "grok-4-1-fast-non-reasoning",
+            ],
         }
     ]
 }

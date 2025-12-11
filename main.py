@@ -1,7 +1,8 @@
 from game_layer.game_engine.core_engine import GameStatus
 from game_layer.games.game_selector import get_game, list_available_games
 from agent_layer.agents.agent_selector import get_agent, list_available_agents
-from agent_layer.LLMs.openai_llm import OpenAILLM
+from agent_layer.LLMs.llm_selector import get_llm, list_available_llms
+
 
 import sys
 import argparse
@@ -12,6 +13,7 @@ MAX_ITERS = 50
 def parse_args():
     available_games = list_available_games()
     available_agents = list_available_agents()
+    available_llm = list_available_llms()
 
     parser = argparse.ArgumentParser(
         description="Game launcher with agent or user input."
@@ -27,6 +29,13 @@ def parse_args():
         choices=available_agents,
         help=f"Agent name. Options: {', '.join(available_agents)}",
     )
+
+    parser.add_argument(
+        "--llm",
+        choices=available_llm,
+        help=f"LLM model name. Options: {', '.join(available_llm)}",
+    )
+        
     parser.add_argument(
         "--user_input",
         action="store_true",
@@ -35,11 +44,13 @@ def parse_args():
 
     args = parser.parse_args()
 
-    if not args.user_input and args.agent is None:
-        parser.error("You must specify --agent NAME or use --user_input.")
-
-    if args.user_input and args.agent is not None:
-        print("Warning: --user_input was specified, --agent will be ignored.")
+    
+    if args.user_input:
+        if args.agent or args.llm:
+            parser.error("--agent and --llm cannot be used with --user_input.")
+    else:
+        if not args.agent or not args.llm:
+            parser.error("--agent and --llm are required when --user_input is not provided.")
 
     return args
 
@@ -60,7 +71,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     if not args.user_input:
-        llm = OpenAILLM()
+        llm = get_llm(args.llm)
         agent = get_agent(args.agent, llm)
 
     game = get_game(args.game)
