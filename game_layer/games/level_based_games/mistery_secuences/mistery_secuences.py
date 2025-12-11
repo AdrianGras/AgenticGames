@@ -52,8 +52,7 @@ class MisterySecuences(LevelBasedEngine):
         )
         return inst
     
-    def verify_input(self, input_data):
-        super().verify_input(input_data)
+    def verify_level_input(self, input_data):
         input_parts = input_data.split()
         if len(input_parts) != len(self.string_layout):
             raise ValueError(f"The length of the current sequence is {len(self.string_layout)}, and hence, your input must have {len(self.string_layout)} elements separated by spaces.")

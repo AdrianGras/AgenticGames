@@ -59,6 +59,7 @@ class LevelBasedEngine(CoreEngine):
         Initializes the specified level.
         """
         self.current_level_index = level_index
+        self.steps_in_current_level = 0
 
     
     def get_instructions(self):
@@ -90,7 +91,6 @@ class LevelBasedEngine(CoreEngine):
             self.max_unlocked_level, 
             self.current_level_index + 1
         )
-        self.steps_in_current_level = 0
         return self.change_level(self.current_level_index + 1)
 
 
@@ -118,12 +118,7 @@ class LevelBasedEngine(CoreEngine):
             if command == '/repeat':
                 requested_level = self.current_level_index - 1
             elif command == '/level' and len(command_parts) > 1:
-                try:
                     requested_level = int(command_parts[1]) - 1
-                except ValueError:
-                    return "Invalid level number."
-            else:
-                return "Unknown command."
             return self.change_level(requested_level)  
 
         level_status = self.apply_level_logic(input_data)
@@ -139,6 +134,28 @@ class LevelBasedEngine(CoreEngine):
         
         self.start_level(new_level_index)
         return self.get_level_observation()
+    
+    def verify_input(self, input_data):
+        super().verify_input(input_data)
+        if input_data[0] == "/":
+            command_parts = input_data.split()
+            command = command_parts[0]
+
+            assert command in ['/repeat', '/level'], f"Unknown command: {command}"
+            if command == '/level':
+                assert len(command_parts) > 1 and command_parts[1].isdigit(), "Command '/level' requires an integer argument"
+        else:
+            self.verify_level_input(input_data)
+            
+    @abstractmethod
+    def verify_level_input(self, input_data):
+        """
+        Verifies the level-specific input.
+        """
+        pass
+
+    
+        
     
     
         
