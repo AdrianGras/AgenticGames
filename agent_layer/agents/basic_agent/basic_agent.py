@@ -3,7 +3,7 @@ from agent_layer.agents.agent_player import AgentPlayer
 import json
 
 class BasicAgent(AgentPlayer):
-    def __init__(self, llm, system_prompt_id="default"):
+    def __init__(self, llm, system_prompt_id="check_hypothesis"):
         super().__init__(llm)
         self.message_history = []
         self.system_prompt = self.load_system_prompt(system_prompt_id)

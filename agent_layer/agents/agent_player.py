@@ -1,18 +1,40 @@
 from abc import ABC, abstractmethod
-import re
+from concurrent.futures import Future
+from typing import Iterator, Any, Tuple
+
 
 class AgentPlayer(ABC):
-    def __init__(self, LLM_model):
+    def __init__(self, LLM_model: Any):
         super().__init__()
         self.LLM_model = LLM_model
 
-
     @abstractmethod
-    def get_action(self, game_observation):
+    def get_action(self, game_observation: Any) -> Any:
         """
         Given the current game observation, returns the next action to take.
         """
         pass
+
+    def get_future_action(
+        self, game_observation: Any
+    ) -> Tuple[Iterator[str], Future]:
+        """
+        Naive default implementation:
+        - Empty reasoning stream
+        - Future resolved immediately with get_action result
+        """
+
+        def empty_reasoning_stream() -> Iterator[str]:
+            if False:
+                yield ""  # hace que sea un generator válido
+
+        action = self.get_action(game_observation)
+
+        action_future: Future = Future()
+        action_future.set_result(action)
+
+        return empty_reasoning_stream(), action_future
+
 
     def parse_action(self, action_str):
         """
