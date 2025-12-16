@@ -8,8 +8,6 @@ AGENTS: dict[str, Type[AgentActor]] = {
 
 def get_agent(
     agent_id: str, 
-    model_name: str, 
-    on_reasoning: Optional[ReasoningCallback] = None,
     **kwargs: Any
 ) -> AgentActor:
     """
@@ -17,8 +15,6 @@ def get_agent(
 
     Args:
         agent_id (str): The identifier of the agent logic (e.g., 'basic_agent').
-        model_name (str): The name of the LLM model to use (e.g., 'gpt-4').
-        on_reasoning (ReasoningCallback, optional): Hook for UI streaming.
         **kwargs: Additional arguments specific to certain agents (e.g., system_prompt_id).
 
     Returns:
@@ -35,11 +31,7 @@ def get_agent(
 
     agent_class = AGENTS[agent_id]
 
-    return agent_class(
-        model_name=model_name, 
-        on_reasoning=on_reasoning,
-        **kwargs
-    )
+    return agent_class(**kwargs)
 
 def list_available_agents() -> List[str]:
     """

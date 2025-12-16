@@ -5,7 +5,7 @@
             "name": "Agent player",
             "type": "debugpy",
             "request": "launch",
-            "program": "main.py",
+            "program": "ui_layer/cli/main.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [
@@ -18,7 +18,7 @@
             "name": "user player",
             "type": "debugpy",
             "request": "launch",
-            "program": "main.py",
+            "program": "ui_layer/cli/main.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [
