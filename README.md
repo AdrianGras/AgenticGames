@@ -8,7 +8,7 @@ sdk_version: 4.44.1
 app_file: app.py
 pinned: false
 license: apache-2.0
-short_description: Research-oriented framework to test and evaluate AI agent strategies.
+short_description: Test and evaluate AI agent strategies.
 ---
 
 # 🤖 AgenticGames
