@@ -1,6 +1,6 @@
-from ui_layer.gradio.gradio_app import GameApp
+from ui_layer.gradio.app import GradioApp
 
 if __name__ == "__main__":
-    app = GameApp()
-    demo = app.build_app_ui()
+    app = GradioApp()
+    demo = app.build()
     demo.launch()

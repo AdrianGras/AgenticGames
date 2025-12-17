@@ -35,7 +35,7 @@ class CoreEngine(ABC):
         try:
             self.verify_input(input_data)
         except ValueError as e:
-            return e
+            return str(e)
         
         new_obs = self.process_input(input_data)
         self.observation_history.append(new_obs)

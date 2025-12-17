@@ -25,6 +25,14 @@
                 "--game", "${input:gameName}",
                 "--user_input",
             ]
+        },
+        {
+            "name": "Gradio app",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
         }
     ],
     "inputs": [
@@ -59,4 +67,6 @@
             ],
         }
     ]
+
+    
 }

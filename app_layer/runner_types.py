@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from game_layer.game_engine.core_engine import GameStatus
+from typing import Union
 
 @dataclass
 class GameStart:
@@ -43,3 +44,5 @@ class GameResult:
     """
     final_status: GameStatus
     history_log: str
+
+GameEvent = Union[GameStart, GameTurn, GameResult]

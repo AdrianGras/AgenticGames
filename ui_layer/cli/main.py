@@ -146,7 +146,6 @@ async def main():
                 print("="*60)
                 print(f"GAME OVER")
                 print(f"Status: {event.final_status.name}")
-                print(f"Reason: {event.reason}")
                 print("="*60)
                 
                 save_session_history(event.history_log, args.game, agent_label)
