@@ -2,7 +2,7 @@
 title: AgenticGames
 emoji: 🤖🎮
 colorFrom: indigo
-colorTo: slate
+colorTo: purple
 sdk: gradio
 sdk_version: 4.44.1
 app_file: app.py
