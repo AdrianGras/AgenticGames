@@ -1,90 +1,97 @@
 import gradio as gr
-from typing import List, Any
+from typing import List, Any, Dict
 from ui_layer.gradio.signals import SignalReceiver
 from app_layer.runner_types import GameEvent, GameStart, GameTurn, GameResult
 from game_layer.game_engine.core_engine import GameStatus
 
 class StandardGameView(SignalReceiver):
     """
-    A rich-text game output component that renders game events using Markdown.
+    Renders the game flow as a conversational interaction:
+    - User role: Represents Agent Actions (Right side).
+    - Assistant role: Represents Game Observations and System Messages (Left side).
     
-    Features:
-    - Renders styling (bold, code blocks, quotes) for better readability.
-    - Accumulates history in an internal buffer.
-    - Handles polymorphic GameEvent objects directly.
+    This view uses the Chatbot component to leverage native autoscroll 
+    and clear visual separation between player moves and environment feedback.
     """
 
     def __init__(self, game_name: str):
         """
-        Initializes the view with a Markdown component and an empty history buffer.
+        Initializes the game view with a Chatbot display and an empty message buffer.
 
         Args:
-            game_name: The title of the game for the header.
+            game_name (str): The display name of the current game.
         """
-        self._history_buffer: List[str] = []
+        self._history_buffer: List[Dict[str, str]] = []
         
         with gr.Group():
             gr.Markdown(f"### 🎮 Playing: {game_name}")
             
-            # We use a Markdown component for rich text rendering (bold, code, etc.)
-            self.display_area = gr.Markdown(
-                value="*Waiting for game start...*",
-                elem_classes=["game-log-container"], # Useful for custom CSS if needed
-                height=500, # Fixed height with internal scroll is better for logs
+            self.display_area = gr.Chatbot(
+                value=[],
+                type="messages",
+                label="Game Interaction",
+                show_label=False,
+                height=600,
+                show_copy_button=True,
+                bubble_full_width=False,
+                render_markdown=True
             )
 
-        # Initialize SignalReceiver with the target component
         super().__init__(targets=[self.display_area])
 
     def update(self, events: List[GameEvent]) -> Any:
         """
-        Receives raw domain events, converts them to Markdown, and updates the view.
-        
+        Processes new domain events and updates the chatbot history.
+
         Args:
-            events: A list of GameStart, GameTurn, or GameResult objects.
-            
+            events (List[GameEvent]): New events emitted by the game engine.
+
         Returns:
-            str: The full rendered Markdown history.
+            List[Dict[str, str]]: The updated message history for Gradio rendering.
         """
         if not events:
             return gr.skip()
 
-        # Process new events and append to history
         for event in events:
-            rendered_chunk = self._render_event(event)
-            self._history_buffer.append(rendered_chunk)
+            new_messages = self._event_to_messages(event)
+            self._history_buffer.extend(new_messages)
 
-        # Join all history chunks into a single Markdown document
-        full_log = "\n\n".join(self._history_buffer)
-        
-        return full_log
+        return self._history_buffer
 
-    def _render_event(self, event: GameEvent) -> str:
+    def _event_to_messages(self, event: GameEvent) -> List[Dict[str, str]]:
         """
-        Presentation Logic: Converts Domain Objects into styled Markdown strings.
+        Translates Domain Events into a list of Chatbot messages.
+        
+        Maps actions to 'user' role and observations to 'assistant' role.
         """
         match event:
             case GameStart(initial_observation=obs):
-                return (
-                    f"---\n"
-                    f"{obs}\n"
-                    f"---"
-                )
+                return [{
+                    "role": "assistant",
+                    "content": f"### 🏁 Game Start\n\n{obs}"
+                }]
 
             case GameTurn(iteration=i, observation=obs, action=act):
-                return (
-                    f"**Action:** `{act}`\n\n"
-                    f"> {obs}\n"
-
-                )
+                return [
+                    {
+                        "role": "user",
+                        "content": act
+                    },
+                    {
+                        "role": "assistant",
+                        "content": obs
+                    }
+                ]
 
             case GameResult(final_status=status):
-                if status == GameStatus.FINISHED:
-                    header = "## 🏆 MISSION ACCOMPLISHED"
-                else:
-                    header = "## 💀 GAME OVER"
-                
-                return f"\n---\n{header}\n---"
+                header = "## 🏆 MISSION ACCOMPLISHED" if status == GameStatus.FINISHED else "## 💀 GAME OVER"
+                return [{
+                    "role": "assistant",
+                    "content": header
+                }]
 
             case _:
-                return f"**Unknown Event:** {str(event)}"
+                return [{
+                    "role": "assistant",
+                    "content": f"**System Event:** {str(event)}"
+                }]
