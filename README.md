@@ -8,7 +8,7 @@ sdk_version: 5.49.1
 app_file: app.py
 pinned: false
 license: apache-2.0
-short_description: A framework for evaluating LLM agents in text-based environments.
+short_description: Framework for evaluating LLM agents in text-based games.
 ---
 
 # 🤖 AgenticGames
