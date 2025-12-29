@@ -5,13 +5,20 @@ import sys
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-# Path alignment to include project root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
+os.chdir(PROJECT_ROOT)
+
+
 
 from app_layer.session_builder import SessionBuilder, HumanSessionBuilder, AgentSessionBuilder
 from app_layer.runner_types import GameStart, GameTurn, GameResult
 from game_layer.games.game_selector import list_available_games
 from agent_layer.agent_selector import list_available_agents
+
 
 # Configuration Constants
 OUTPUT_DIR = os.path.join("outputs", "game_histories")
@@ -48,8 +55,8 @@ def parse_arguments() -> argparse.Namespace:
     )
     parser.add_argument(
         "--llm", 
-        default="mock", 
-        help="The LLM model identifier (e.g., 'gpt-4', 'grok-beta'). Default is 'mock'."
+        default="gpt-4", 
+        help="The LLM model identifier (e.g., 'gpt-4', 'grok-beta'). Default is 'gpt-4'."
     )
     
     parser.add_argument(

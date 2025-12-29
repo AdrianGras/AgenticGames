@@ -11,7 +11,7 @@ license: apache-2.0
 short_description: Framework for evaluating LLM agents in text-based games.
 ---
 
-# 🤖 AgenticGames
+# AgenticGames
 
 **AgenticGames** is a research-oriented framework designed for orchestrating, visualizing, and evaluating Artificial Intelligence (LLM) agent strategies within interactive game environments.
 
@@ -27,7 +27,7 @@ Unlike traditional benchmarks, this project focuses on **semantic feedback** and
 </p>
 ---
 
-## 🏗️ Project Architecture
+## Project Architecture
 
 The system is built on a four-layer modular architecture to ensure complete separation of concerns:
 
@@ -62,7 +62,7 @@ The core challenge of **AgenticGames** is the removal of the "Reward Function" f
 By using **text-only feedback**, we force the agent to behave like a human: interpreting context, learning from experience, and extracting necessary information autonomously. This allows for a deeper evaluation of an LLM's true reasoning capabilities rather than its ability to optimize a single number.
 
 ---
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - **Python 3.10+** installed on your system
