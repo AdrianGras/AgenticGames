@@ -1,12 +1,4 @@
-Tienes toda la razón. Me preocupé tanto por que no se rompiera el formato del bloque de código que terminé recortando demasiado la esencia del proyecto. He vuelto a redactar todo integrando los detalles específicos de cada capa, la filosofía del "Zero-Knowledge" y las funcionalidades de la UI que acabamos de crear.
-
-He dividido el contenido en dos bloques de código de Python para que se visualicen correctamente en tu chat:
-
-Parte 1: Metadatos, Introducción y Arquitectura Detallada
-Python
-
-# Part 1: Metadata, Intro and Detailed Architecture
-readme_part1 = """---
+---
 title: AgenticGames
 emoji: 🤖🎮
 colorFrom: indigo
@@ -25,6 +17,14 @@ short_description: A framework for evaluating LLM agents in text-based environme
 
 Unlike traditional benchmarks, this project focuses on **semantic feedback** and **autonomous adaptation**. Researchers can observe agent behavior in real-time, analyze reasoning traces, and benchmark AI performance against human gameplay in environments where the rules are not pre-defined in the agent's code.
 
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Wifmin/AgenticGames)
+> **Try it now:** If you want a quick test without installing anything, check out our [Public Demo on Hugging Face](https://huggingface.co/spaces/Wifmin/AgenticGames).
+
+<p align="center">
+  <img src="./assets/dashboard.gif" alt="AgenticGames Dashboard Demo" width="800">
+  <br>
+  <em>Real-time visualization of an LLM agent reasoning and playing through the Gradio Dashboard.</em>
+</p>
 ---
 
 ## 🏗️ Project Architecture
@@ -62,21 +62,58 @@ The core challenge of **AgenticGames** is the removal of the "Reward Function" f
 By using **text-only feedback**, we force the agent to behave like a human: interpreting context, learning from experience, and extracting necessary information autonomously. This allows for a deeper evaluation of an LLM's true reasoning capabilities rather than its ability to optimize a single number.
 
 ---
-
-## 🛠️ Setup & Installation
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.10+
-- LLM API Keys (more details in [Agent Layer](./agent_layer/) )
+- **Python 3.10+** installed on your system
+- **LLM API Keys** for agent inference (OpenAI, XAI, or other supported providers—see [Agent Layer](./agent_layer/) for configuration details)
+- **Git** for cloning the repository
 
-### Local Installation
-1. Clone: git clone https://github.com/Wifmin/AgenticGames.git
-2. Setup Env: python -m venv venv && source venv/bin/activate
-3. Install: pip install -r requirements.txt
+### Installation Guide
 
-### Running the App
-To start the Gradio research dashboard:
+Clone the repository and set up your development environment:
+
+```bash
+git clone https://github.com/Wifmin/AgenticGames.git
+cd AgenticGames
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### Agentic Mode Configuration
+
+To initialize the agentic mode configuration, ensure that you set up the necessary API keys. These keys must be specified in the agent layer configuration to function properly.
+
+Set your LLM API credentials in `.env`:
+```
+OPENAI_API_KEY=your_key_here
+XAI_API_KEY=your_key_here
+```
+Specific instructions can be found in the [Agent Layer](./agent_layer/) documentation.
+
+
+For detailed setup per component, see the respective layer documentation.
+
+### Running AgenticGames
+
+**Gradio Interface:**
+```bash
 python app.py
+```
+Open the URL displayed in your terminal to access the interactive research dashboard with real-time reasoning logs and game visualization.
+
+**CLI Interface:**
+Run this comand to use the cli interface in user mode and play the Mistery sequence game:
+```bash
+python ui_layer\cli\main.py --user_input --game mistery_sequences
+```
+You can also run the following comand to get further help:
+```bash
+python ui_layer\cli\main.py --help
+```
+Refer to [UI Layer](./ui_layer/) documentation for further details.
+
 
 ---
 
