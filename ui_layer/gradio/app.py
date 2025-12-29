@@ -15,8 +15,8 @@ class GradioApp:
     """
 
     def build(self) -> gr.Blocks:
-        with AppWindow(title="AI Game Runner") as demo:            
-            gr.Markdown("# 🎮 AI Game Runner Environment")
+        with AppWindow(title="Agentic Games") as demo:            
+            gr.Markdown("# 🎮 Agentic Games")
 
             self.session_config = gr.State(value=None)
             self.render_key = gr.State(value=None)

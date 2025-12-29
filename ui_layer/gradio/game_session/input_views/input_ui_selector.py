@@ -1,12 +1,13 @@
 from typing import Type, Any, Dict
 from ui_layer.gradio.game_session.input_views.standard_input_view import StandardInputView
+from ui_layer.gradio.game_session.input_views.mystery_sequences_input_view import MisterySequencesInputView
 from ui_layer.gradio.signals import SignalEmitter
 
 # Registry mapping game identifiers to their respective UI implementations.
 # All registered classes must inherit from SignalEmitter to ensure 
 # compatibility with the session orchestrator.
 INPUT_UIs: Dict[str, Type[SignalEmitter]] = {
-    "mistery_sequences": StandardInputView,
+    "mistery_sequences": MisterySequencesInputView
 }
 
 def get_input_ui(
