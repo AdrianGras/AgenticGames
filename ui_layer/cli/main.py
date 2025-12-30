@@ -131,31 +131,34 @@ async def main():
     
     try:
         async for event in runner.run():
-            # --- SCENE START ---
-            if isinstance(event, GameStart):
-                print("\n" + "="*60)
-                print(f"GAME START: {event.game_name}")
-                print("="*60)
-                print(f"\n{event.initial_observation}\n")
+            match event:
+                case GameStart(game_name=game_name, initial_observation=obs):
+                    print("\n" + "=" * 60)
+                    print(f"GAME START: {game_name}")
+                    print("=" * 60)
+                    print(f"\n{obs}\n")
 
-            # --- TURN EXECUTION ---
-            elif isinstance(event, GameTurn):
-                print(f"> Action: {event.action}")
-                print("-" * 20)
-                print(f"{event.observation}\n")
+                case GameTurn(action=action, observation=obs, iteration=it):
+                    print(f"> Action: {action}")
+                    print("-" * 20)
+                    print(f"{obs}\n")
 
-                if event.iteration >= args.max_iters:
-                    print(f"\n[System]: Max iterations limit ({args.max_iters}) reached. Stopping.")
-                    break
+                    if it >= args.max_iters:
+                        print(
+                            f"\n[System]: Max iterations limit ({args.max_iters}) reached. Stopping."
+                        )
+                        break
 
-            # --- GAME OVER ---
-            elif isinstance(event, GameResult):
-                print("="*60)
-                print(f"GAME OVER")
-                print(f"Status: {event.final_status.name}")
-                print("="*60)
-                
-                save_session_history(event.history_log, args.game, agent_label)
+                case GameResult(final_status=status, history_log=history):
+                    print("=" * 60)
+                    print("GAME OVER")
+                    print(f"Status: {status.name}")
+                    print("=" * 60)
+
+                    save_session_history(history, args.game, agent_label)
+
+                case _:
+                    pass
 
     except KeyboardInterrupt:
         print("\n\n[System]: Session interrupted by user (Ctrl+C).")
