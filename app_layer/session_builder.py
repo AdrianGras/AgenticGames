@@ -8,8 +8,7 @@ from agent_layer.actor import Actor
 from agent_layer.human_actor import HumanActor, InputSource
 
 # Factories
-from game_layer.games.game_selector import get_game
-from agent_layer.agent_selector import get_agent
+from .registries.manager import get_game_registry, get_agent_registry
 
 class SessionBuilder(ABC):
     """
@@ -38,7 +37,8 @@ class SessionBuilder(ABC):
             ValueError: If initialization of the Game or Actor fails.
         """
         try:
-            game: CoreEngine = get_game(self.game_name, **self.game_params)
+            game_class = get_game_registry().get(self.game_name).cls
+            game: CoreEngine = game_class(self.game_params)
         except ValueError as e:
             raise ValueError(f"SessionBuilder: Failed to initialize game '{self.game_name}'. {e}")
 
@@ -106,9 +106,8 @@ class AgentSessionBuilder(SessionBuilder):
 
     def _create_actor(self) -> Actor:
         try:
-            return get_agent(
-                agent_id=self.agent_name,
-                **self.agent_params
-            )
+            agent_class = get_agent_registry().get(self.agent_name).cls
+            return agent_class(self.agent_params)
+
         except ValueError as e:
             raise ValueError(f"AgentSessionBuilder: Failed to initialize agent. {e}")

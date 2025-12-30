@@ -2,7 +2,7 @@ import asyncio
 from typing import List, Optional, Union, Any
 
 from app_layer.session_config import SessionConfig
-from app_layer.runner_types import GameEvent
+from app_layer.runner_types import GameEvent, GameResult
 from app_layer.session_builder import AgentSessionBuilder, HumanSessionBuilder
 
 # Type alias for cleaner signatures
