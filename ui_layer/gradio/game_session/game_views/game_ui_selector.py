@@ -6,7 +6,7 @@ from ui_layer.gradio.signals import SignalReceiver
 # All registered classes must inherit from SignalReceiver to ensure 
 # compatibility with the session orchestrator.
 GAME_UIs: Dict[str, Type[SignalReceiver]] = {
-    "mistery_sequences": StandardGameView,
+    "mystery_sequences": StandardGameView,
 }
 
 def get_game_ui(
@@ -29,7 +29,7 @@ def get_game_ui(
     # Fallback logic: if the game doesn't have a specialized UI, 
     # we use the basic text-based implementation.
     if game_name not in GAME_UIs:
-        return StandardGameView(**kwargs)
+        return StandardGameView(game_name,**kwargs)
         
     ui_class = GAME_UIs[game_name]
     return ui_class(game_name, **kwargs)
