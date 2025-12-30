@@ -154,6 +154,12 @@ class LevelBasedEngine(CoreEngine):
         """
         pass
 
+    def get_score(self) -> float:
+        """
+        Returns the current score of the game.
+        """
+        return self.max_unlocked_level + 1
+
     
         
     

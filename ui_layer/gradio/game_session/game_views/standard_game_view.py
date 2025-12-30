@@ -24,7 +24,14 @@ class StandardGameView(SignalReceiver):
         self._history_buffer: List[Dict[str, str]] = []
         
         with gr.Group():
-            gr.Markdown(f"### 🎮 Playing: {game_name}")
+            with gr.Row():
+                gr.Markdown(f"### 🎮 Playing: {game_name}")
+                self.score_display = gr.Number(
+                    label="Current Score", 
+                    value=0.0,
+                    interactive=False,
+                    precision=2
+                )
             
             self.display_area = gr.Chatbot(
                 value=[],
@@ -37,7 +44,7 @@ class StandardGameView(SignalReceiver):
                 render_markdown=True
             )
 
-        super().__init__(targets=[self.display_area])
+        super().__init__(targets=[self.display_area, self.score_display])
 
     def update(self, events: List[GameEvent]) -> Any:
         """
@@ -56,7 +63,10 @@ class StandardGameView(SignalReceiver):
             new_messages = self._event_to_messages(event)
             self._history_buffer.extend(new_messages)
 
-        return self._history_buffer
+        last_event = events[-1]
+        score = self._get_score(last_event)
+
+        return self._history_buffer, score
 
     def _event_to_messages(self, event: GameEvent) -> List[Dict[str, str]]:
         """
@@ -95,3 +105,23 @@ class StandardGameView(SignalReceiver):
                     "role": "assistant",
                     "content": f"**System Event:** {str(event)}"
                 }]
+            
+    def _get_score(self, event: GameEvent) -> float:
+        """
+        Extracts the score from the given event if available.
+
+        Args:
+            event (GameEvent): The event to extract the score from.
+
+        Returns:
+            float: The extracted score, or 0.0 if not applicable.
+        """
+        match event:
+            case GameTurn(score=score):
+                return score
+            case GameResult(final_score=score):
+                return score
+            case GameStart(initial_score=score):
+                return score
+            case _:
+                return 0.0

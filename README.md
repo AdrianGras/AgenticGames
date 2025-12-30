@@ -34,8 +34,8 @@ The system is built on a four-layer modular architecture to ensure complete sepa
 
 ### 🎮 [Game Layer](./game_layer/)
 Focuses on text-based environments with specific cognitive skill testing:
-- **Zero-Knowledge Principle:** Games are designed to be played without prior instructions.
-- **Pure Text Feedback:** No numerical scores are provided. Actors (agents or humans) must parse text strings to identify success, failure, or progress.
+- **Zero-Knowledge Principle:** Games are designed to be played without prior training or knowledge embedded in the agent.
+- **Pure Text Feedback:** No numerical scores are provided. Actors (agents or humans) must parse text strings to identify success, failure, or progress. There's a score internally, but it's hidden from the agent.
 - **Skill Classification:** The games are classified based on cognitive skills like memory, long-term planning, pattern recognition, and more.
 
 ### 🧠 [Agent Layer](./agent_layer/)

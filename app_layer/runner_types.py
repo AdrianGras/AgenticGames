@@ -13,6 +13,7 @@ class GameStart:
     """
     initial_observation: str
     game_name: str
+    initial_score: float
 
 @dataclass
 class GameTurn:
@@ -30,6 +31,7 @@ class GameTurn:
     iteration: int
     action: str
     observation: str
+    score: float
 
 @dataclass
 class GameResult:
@@ -43,6 +45,7 @@ class GameResult:
         history_log (str): The complete textual record of all inputs and observations.
     """
     final_status: GameStatus
+    final_score: float
     history_log: str
 
 GameEvent = Union[GameStart, GameTurn, GameResult]

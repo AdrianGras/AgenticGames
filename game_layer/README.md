@@ -41,6 +41,7 @@ The Abstract Base Class for all games. It manages the game loop state, history t
 * **get_instructions()**: Returns the initial rules/context provided to the actor.
 * **verify_input(input_data)**: Validates the input format before processing.
 * **process_input(input_data)**: The core logic. Receives an action and returns a text observation.
+* **get_score()**: Returns the current score of the game.
 
 ### 2. Level Based Engine (level_based_engine.py)
 An extension of the Core Engine designed for games divided into progressive levels. It automates JSON configuration loading and navigation logic.

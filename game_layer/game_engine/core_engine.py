@@ -33,6 +33,9 @@ class CoreEngine(ABC):
         """
         Advances the game by one turn.
         """
+        if self.game_status != GameStatus.RUNNING:
+            return "Error: The game has already ended."
+
         self.input_history.append(input_data)
 
         try:
@@ -89,3 +92,10 @@ class CoreEngine(ABC):
             out.append("-" * 20)
             
         return "\n".join(out)
+    
+    @abstractmethod
+    def get_score(self) -> float:
+        """
+        Returns the current score of the game.
+        """
+        ...

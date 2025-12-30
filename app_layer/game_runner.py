@@ -1,7 +1,7 @@
 from typing import AsyncGenerator, Union
 from game_layer.game_engine.core_engine import CoreEngine, GameStatus
 from agent_layer.actor import Actor
-from app_layer.runner_types import GameStart, GameTurn, GameResult
+from app_layer.runner_types import GameEvent, GameStart, GameTurn, GameResult
 
 class GameRunner:
     """
@@ -26,7 +26,7 @@ class GameRunner:
         self.game = game
         self.actor = actor
 
-    async def run(self) -> AsyncGenerator[Union[GameStart, GameTurn, GameResult], None]:
+    async def run(self) -> AsyncGenerator[GameEvent, None]:
         """
         Executes the main game loop indefinitely until the Game Engine signals a stop.
 
@@ -44,10 +44,11 @@ class GameRunner:
         """
         # 1. Initialization Phase
         current_observation = self.game.start()
-        
+        score = self.game.get_score()
         yield GameStart(
             initial_observation=current_observation,
-            game_name=self.game.name
+            game_name=self.game.name,
+            initial_score=score
         )
 
         iteration = 0
@@ -58,18 +59,21 @@ class GameRunner:
             action = await self.actor.get_action(current_observation)
 
             new_observation = self.game.step(action)
-
+            score = self.game.get_score()
             yield GameTurn(
                 iteration=iteration + 1,
                 action=action,
-                observation=new_observation
+                observation=new_observation,
+                score=score
             )
 
             current_observation = new_observation
             iteration += 1
 
         # 3. Termination Phase
+        final_score = self.game.get_score()
         yield GameResult(
             final_status=self.game.game_status,
-            history_log=self.game.get_full_history()
+            history_log=self.game.get_full_history(),
+            final_score=final_score
         )
