@@ -9,7 +9,7 @@ Games are classified by the cognitive skills they evaluate. This is a **Work In 
 
 | Game | Folder | Cognitive Skill | Status |
 | :--- | :--- | :--- | :--- |
-| **Mystery Sequences** | [/mistery_secuences](./games/level_based_games/mistery_secuences/README.md) | Scientific loop, Pattern Recognition | ✅ Playable (Levels WIP)|
+| **Mystery Sequences** | [/mistery_secuences](./games/level_based_games/mistery_secuences/) | Scientific loop, Pattern Recognition | ✅ Playable (Levels WIP)|
 | **Skewed Spinner** | TBD | Pattern recognition, resource planning | 🚧 Planned |
 | **Technical Flight Manual** | TBD | Long term memory, resource planning | 🚧 Planned |
 
