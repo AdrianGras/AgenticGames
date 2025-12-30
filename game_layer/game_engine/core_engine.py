@@ -7,6 +7,8 @@ class GameStatus(Enum):
     FINISHED = auto()
     FAILED = auto()
 
+MAX_INVALID_INPUTS = 10
+
 class CoreEngine(ABC):
     """
     Abstract Base Class for all Games.
@@ -17,6 +19,7 @@ class CoreEngine(ABC):
         self.game_status = GameStatus.RUNNING
         self.input_history: List[str] = []
         self.observation_history: List[str] = []
+        self.consecutive_invalid_inputs = 0
 
     def start(self) -> str:
         """
@@ -34,7 +37,12 @@ class CoreEngine(ABC):
 
         try:
             self.verify_input(input_data)
+            self.consecutive_invalid_inputs = 0
         except ValueError as e:
+            self.consecutive_invalid_inputs += 1
+            if self.consecutive_invalid_inputs >= MAX_INVALID_INPUTS:
+                self.game_status = GameStatus.FAILED
+                return "Too many invalid inputs. Aborting the game to avoid infinite loop."
             return str(e)
         
         new_obs = self.process_input(input_data)
