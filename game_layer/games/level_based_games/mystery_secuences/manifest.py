@@ -1,6 +1,6 @@
 from app_layer.registries.generic_registry import EntityManifest
 from app_layer.registries.specs import IntParamSpec
-from .mistery_secuences import MisterySecuences
+from .mystery_secuences import MisterySecuences
 
 # The discovery system will identify this instance via type inspection
 manifest = EntityManifest(
