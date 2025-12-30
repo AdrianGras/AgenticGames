@@ -8,6 +8,7 @@ from app_layer.game_execution_manager import GameExecutionManager
 
 from ui_layer.gradio.game_session.game_views.game_ui_selector import get_game_ui
 from ui_layer.gradio.game_session.input_views.input_ui_selector import get_input_ui
+from ui_layer.gradio.game_session.agent_views.agent_ui_selector import get_agent_ui
 from ui_layer.gradio.game_session.agent_views.agent_control_base_ui import AgentControlBaseUI
 from ui_layer.gradio.game_session.agent_views.standard_agent_ui import StandardAgentUI
 from ui_layer.gradio.game_session.agent_views.agent_comand import AgentCommand
@@ -49,7 +50,7 @@ class GameSessionUI:
                     if self.config.is_human:
                         self.control_ui = get_input_ui(self.config.game_name)
                     else:
-                        self.control_ui = StandardAgentUI()
+                        self.control_ui = get_agent_ui(self.config.agent_name)
 
         # Dual-channel reactive pipeline states
         self.game_buffer = gr.State()
