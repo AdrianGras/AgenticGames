@@ -5,6 +5,7 @@ from .mistery_secuences import MisterySecuences
 # The discovery system will identify this instance via type inspection
 manifest = EntityManifest(
     id="mystery_sequences",
+    display_name="Mystery Sequences",
     cls=MisterySecuences,
     description=(
         "A logic-based challenge where players must deduce hidden rules governing "

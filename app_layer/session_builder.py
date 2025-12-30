@@ -38,7 +38,7 @@ class SessionBuilder(ABC):
         """
         try:
             game_class = get_game_registry().get(self.game_name).cls
-            game: CoreEngine = game_class(self.game_params)
+            game: CoreEngine = game_class(**self.game_params)
         except ValueError as e:
             raise ValueError(f"SessionBuilder: Failed to initialize game '{self.game_name}'. {e}")
 
@@ -107,7 +107,7 @@ class AgentSessionBuilder(SessionBuilder):
     def _create_actor(self) -> Actor:
         try:
             agent_class = get_agent_registry().get(self.agent_name).cls
-            return agent_class(self.agent_params)
+            return agent_class(**self.agent_params)
 
         except ValueError as e:
             raise ValueError(f"AgentSessionBuilder: Failed to initialize agent. {e}")
