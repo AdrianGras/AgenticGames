@@ -2,8 +2,10 @@ from game_layer.game_engine.level_based_engine import LevelBasedEngine, LevelLog
 from .sequence_character import CHAR_MAP
 
 class MisterySecuences(LevelBasedEngine):
-    def __init__(self):
+    def __init__(self, max_consecutive_failed_attempts: int = 50):
         super().__init__()
+        self.max_consecutive_failed_attempts = max_consecutive_failed_attempts
+        self.current_consecutive_failed_attempts = 0
     
     @property
     def name(self):
@@ -34,13 +36,21 @@ class MisterySecuences(LevelBasedEngine):
         input_data = [int(x) for x in input_data.split()]
         for character in self.level_character_layout:
             if not character.check_sequence(input_data):
-                return LevelLogicResult.CONTINUE
+                return self._handle_not_completed()
         
         for x in input_data:
             if x == 1:
+                self.current_consecutive_failed_attempts = 0
                 return LevelLogicResult.COMPLETED
-            
-        return LevelLogicResult.CONTINUE
+        
+        return self._handle_not_completed()
+    
+    def _handle_not_completed(self):
+        self.current_consecutive_failed_attempts += 1
+        if self.current_consecutive_failed_attempts >= self.max_consecutive_failed_attempts:
+            return LevelLogicResult.FAILED
+        else:   
+            return LevelLogicResult.CONTINUE
     
     def get_instructions(self):
         inst = super().get_instructions()
