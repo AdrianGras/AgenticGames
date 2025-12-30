@@ -25,6 +25,7 @@ Unlike traditional benchmarks, this project focuses on **semantic feedback** and
   <br>
   <em>Real-time visualization of an LLM agent reasoning and playing through the Gradio Dashboard.</em>
 </p>
+
 ---
 
 ## Project Architecture
