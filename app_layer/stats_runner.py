@@ -3,11 +3,11 @@ import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
 from typing import Dict, List, Any, Optional
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from tqdm import tqdm
 
-from app_layer.session_builder import AgentSessionBuilder
 from app_layer.session_config import SessionConfig
+from app_layer.direct_execution_manager import DirectExecutionManager
 from app_layer.runner_types import GameStart, GameTurn, GameResult
 
 @dataclass(frozen=True)
@@ -23,27 +23,20 @@ class StatsReport:
 
 def _execute_session_task(config: SessionConfig) -> tuple[Dict[int, float], float]:
     """
-    Worker task executing a single game session. 
-    Returns the session history and final score.
+    Worker task executing a single game session via DirectExecutionManager.
     """
     return asyncio.run(_run_logic(config))
 
 async def _run_logic(config: SessionConfig) -> tuple[Dict[int, float], float]:
     """
-    Internal async logic for a single session.
+    Internal async logic consuming the DirectExecutionManager stream.
     """
     history = {}
     final_score = 0.0
     
-    builder = AgentSessionBuilder(
-        game_name=config.game_name,
-        agent_name=config.agent_name,
-        game_params=config.game_params,
-        agent_params=config.agent_params
-    )
-    runner = builder.build()
+    manager = DirectExecutionManager(config)
     
-    async for event in runner.run():
+    async for event in manager.execute():
         match event:
             case GameStart(initial_score=score):
                 history[0] = score
@@ -56,33 +49,34 @@ async def _run_logic(config: SessionConfig) -> tuple[Dict[int, float], float]:
 
 class StatsRunner:
     """
-    A dynamic Work Pool runner that executes game sessions across multiple 
-    processes with structured output and real-time feedback.
+    Parallel Work Pool runner that executes game sessions using DirectExecutionManager.
     """
 
     def __init__(self, session_config: SessionConfig, total_runs: int = 100, max_workers: int = None):
+        if session_config.is_human:
+            raise ValueError("StatsRunner: Human sessions are not supported for statistics gathering.")
+
         self.session_config = session_config
         self.total_runs = total_runs
-        # Optimized for I/O bound tasks
-        self.max_workers = max_workers or (multiprocessing.cpu_count() * 5)
+        self.max_workers = max_workers or (multiprocessing.cpu_count() * 2)
         
         self.history: Dict[int, List[float]] = defaultdict(list)
         self.final_scores: List[float] = []
 
     async def run(self) -> StatsReport:
         """
-        Executes simulations and returns a structured StatsReport.
+        Executes simulations across processes and aggregates results.
         """
         loop = asyncio.get_running_loop()
         progress_bar = tqdm(total=self.total_runs, desc="Simulating", unit="game")
 
-        with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
-            future_to_run = [
+        with ProcessPoolExecutor(max_workers=self.max_workers) as executor:            
+            tasks = [
                 loop.run_in_executor(executor, _execute_session_task, self.session_config)
                 for _ in range(self.total_runs)
             ]
             
-            for future in asyncio.as_completed(future_to_run):
+            for future in asyncio.as_completed(tasks):
                 session_history, final_score = await future
                 self._integrate_session(session_history, final_score)
                 progress_bar.update(1)
@@ -91,13 +85,11 @@ class StatsRunner:
         return self._generate_report()
 
     def _integrate_session(self, session_history: Dict[int, float], final_score: float):
-        """Integrates a single session's data into the global state."""
         self.final_scores.append(final_score)
         for turn, score in session_history.items():
             self.history[turn].append(score)
 
     def _generate_report(self) -> StatsReport:
-        """Computes averages and returns a StatsReport object."""
         avg_per_turn = {
             turn: sum(scores) / len(scores) 
             for turn, scores in sorted(self.history.items())

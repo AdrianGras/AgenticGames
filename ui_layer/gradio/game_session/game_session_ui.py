@@ -4,7 +4,7 @@ import uuid
 from typing import List, Optional, Any, Union
 
 from app_layer.session_config import SessionConfig
-from app_layer.game_execution_manager import GameExecutionManager
+from app_layer.controlled_execution_manager import ControlledExecutionManager
 
 from ui_layer.gradio.game_session.game_views.game_ui_selector import get_game_ui
 from ui_layer.gradio.game_session.input_views.input_ui_selector import get_input_ui
@@ -17,7 +17,7 @@ from ui_layer.gradio.layout_utils import WideCenteredLayout, HSpacer
 
 class GameSessionUI:
     """
-    Orchestrates the live Game Session View by bridging the GameExecutionManager 
+    Orchestrates the live Game Session View by bridging the ControlledExecutionManager 
     with polymorphic UI components.
     """
 
@@ -26,7 +26,7 @@ class GameSessionUI:
         Initializes the session UI, logic manager, and lifecycle timers.
         """
         self.config = config
-        self.manager = GameExecutionManager(config)
+        self.manager = ControlledExecutionManager(config)
         
         self._build_layout()
         

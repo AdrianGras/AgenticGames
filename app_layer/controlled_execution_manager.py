@@ -8,7 +8,7 @@ from app_layer.async_input_bridge import AsyncInputBridge
 
 # Type alias for cleaner signatures
 
-class GameExecutionManager:
+class ControlledExecutionManager:
     """
     Manages the asynchronous lifecycle and state of a Game Runner session.
     

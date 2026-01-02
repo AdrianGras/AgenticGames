@@ -1,8 +1,7 @@
 import asyncio
 from typing import Optional
 
-from agent_layer.human_actor import InputSource
-
+from app_layer.input_source import InputSource
 class AsyncInputBridge(InputSource):
     """
     Asynchronous bridge for human input, allowing non-blocking interaction
@@ -29,8 +28,7 @@ class AsyncInputBridge(InputSource):
         Sets the input text, fulfilling the pending future if it exists.
         Args:
             text (str): The input text to be provided.
-        Returns:
-            bool: True if the input was successfully set, False otherwise.
+            
         """
         if self._pending_future is not None and not self._pending_future.done():
             self._pending_future.set_result(text)
