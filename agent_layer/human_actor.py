@@ -1,7 +1,7 @@
 import asyncio
 from typing import Protocol
 from agent_layer.actor import Actor
-from app_layer.input_source import InputSource
+from app_layer.io.input_source import InputSource
 
 
 class HumanActor(Actor):

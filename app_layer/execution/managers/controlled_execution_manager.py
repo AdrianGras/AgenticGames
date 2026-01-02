@@ -1,10 +1,10 @@
 import asyncio
 from typing import List, Optional, Union, Any
 
-from app_layer.session_config import SessionConfig
-from app_layer.runner_types import GameEvent, GameResult
-from app_layer.session_builder import AgentSessionBuilder, HumanSessionBuilder
-from app_layer.async_input_bridge import AsyncInputBridge
+from app_layer.building.session_config import SessionConfig
+from app_layer.core.runner_types import GameEvent, GameResult
+from app_layer.building.session_builder import AgentSessionBuilder, HumanSessionBuilder
+from app_layer.io.async_input_bridge import AsyncInputBridge
 
 # Type alias for cleaner signatures
 

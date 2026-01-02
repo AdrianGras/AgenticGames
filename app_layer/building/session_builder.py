@@ -2,13 +2,13 @@ from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, Callable, Awaitable
 
 # Core Imports
-from app_layer.game_runner import GameRunner
+from app_layer.core.game_runner import GameRunner
 from game_layer.game_engine.core_engine import CoreEngine
 from agent_layer.actor import Actor
 from agent_layer.human_actor import HumanActor, InputSource
 
 # Factories
-from .registries.manager import get_game_registry, get_agent_registry
+from ..registries.manager import get_game_registry, get_agent_registry
 
 class SessionBuilder(ABC):
     """

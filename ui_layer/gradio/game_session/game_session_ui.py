@@ -3,8 +3,8 @@ import gradio as gr
 import uuid
 from typing import List, Optional, Any, Union
 
-from app_layer.session_config import SessionConfig
-from app_layer.controlled_execution_manager import ControlledExecutionManager
+from app_layer.building.session_config import SessionConfig
+from app_layer.execution.managers.controlled_execution_manager import ControlledExecutionManager
 
 from ui_layer.gradio.game_session.game_views.game_ui_selector import get_game_ui
 from ui_layer.gradio.game_session.input_views.input_ui_selector import get_input_ui

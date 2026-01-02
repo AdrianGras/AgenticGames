@@ -1,10 +1,10 @@
 import asyncio
 from typing import AsyncGenerator
 
-from app_layer.session_config import SessionConfig
-from app_layer.runner_types import GameEvent
-from app_layer.session_builder import AgentSessionBuilder, HumanSessionBuilder
-from app_layer.input_source import InputSource
+from app_layer.building.session_config import SessionConfig
+from app_layer.core.runner_types import GameEvent
+from app_layer.building.session_builder import AgentSessionBuilder, HumanSessionBuilder
+from app_layer.io.input_source import InputSource
 from typing import Optional
 
 class DirectExecutionManager:

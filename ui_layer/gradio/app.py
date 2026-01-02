@@ -6,7 +6,7 @@ from ui_layer.gradio.configuration.session_configurator import SessionConfigurat
 from ui_layer.gradio.game_session.game_session_ui import GameSessionUI
 from ui_layer.gradio.layout_utils import AppWindow
 
-from app_layer.session_config import SessionConfig
+from app_layer.building.session_config import SessionConfig
 
 class GradioApp:
     """

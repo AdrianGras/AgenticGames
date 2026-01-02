@@ -1,7 +1,7 @@
 import gradio as gr
 from typing import List, Any, Dict
 from ui_layer.gradio.signals import SignalReceiver
-from app_layer.runner_types import GameEvent, GameStart, GameTurn, GameResult
+from app_layer.core.runner_types import GameEvent, GameStart, GameTurn, GameResult
 from game_layer.game_engine.core_engine import GameStatus
 
 class StandardGameView(SignalReceiver):

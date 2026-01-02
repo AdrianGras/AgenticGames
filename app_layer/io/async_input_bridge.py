@@ -1,5 +1,5 @@
 import asyncio
-from app_layer.input_source import InputSource
+from app_layer.io.input_source import InputSource
 
 class AsyncInputBridge(InputSource):
     """

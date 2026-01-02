@@ -1,7 +1,7 @@
 from typing import AsyncGenerator, Union
 from game_layer.game_engine.core_engine import CoreEngine, GameStatus
 from agent_layer.actor import Actor
-from app_layer.runner_types import GameEvent, GameStart, GameTurn, GameResult
+from app_layer.core.runner_types import GameEvent, GameStart, GameTurn, GameResult
 
 class GameRunner:
     """

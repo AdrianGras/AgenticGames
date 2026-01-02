@@ -6,9 +6,9 @@ from collections import defaultdict
 from dataclasses import dataclass
 from tqdm import tqdm
 
-from app_layer.session_config import SessionConfig
-from app_layer.direct_execution_manager import DirectExecutionManager
-from app_layer.runner_types import GameStart, GameTurn, GameResult
+from app_layer.building.session_config import SessionConfig
+from app_layer.execution.managers.direct_execution_manager import DirectExecutionManager
+from app_layer.core.runner_types import GameStart, GameTurn, GameResult
 
 @dataclass(frozen=True)
 class StatsReport:

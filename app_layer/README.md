@@ -1,40 +1,46 @@
 # ⚙️ App Layer: Orchestration & Execution
 
-The **App Layer** acts as the central nervous system of the framework. It is responsible for assembling sessions, managing the asynchronous game loop, and providing flow control (Play/Pause/Step) to the UI and CLI layers.
+The App Layer serves as the primary bridge between the User Interface and the Domain (Games and Agents). Beyond simple mediation, it is responsible for orchestrating the interaction between the Agent and the Game engine.
 
 ---
 
 ## 🏗️ Core Components
 
-The execution logic is divided into three main responsibilities:
+The application logic is divided into four main areas of responsibility:
 
-### 1. Game Runner (`game_runner.py`)
-The heart of the execution. It implements an **Asynchronous Generator** pattern that orchestrates the turn-based loop.
-* **Decoupling:** It doesn't know about UIs or specific LLMs; it only knows how to pass an `Observation` from a `CoreEngine` to an `Actor` and return the resulting `Action`.
-* **Events:** Instead of a closed loop, it yields structured **Domain Objects** (`GameStart`, `GameTurn`, `GameResult`) at every step.
+### 1. Core Logic (`app_layer/core/`)
+Contains the fundamental and immutable elements of the game lifecycle.
+* **Game Runner (`runner.py`):** The heart of the execution. It implements an **Asynchronous Generator** pattern that orchestrates the turn-based loop.
+* **Domain Types (`types.py`):** Defines standardized data objects (`GameStart`, `GameTurn`, `GameResult`) ensuring the UI remains agnostic to internal logic.
 
-### 2. Game Execution Manager (`game_execution_manager.py`)
-A stateful manager that wraps the runner to provide advanced control for real-time interfaces.
-* **Flow Control:** Implements a gate mechanism using `asyncio.Event` to support **Play**, **Pause**, and **Step** modes.
-* **I/O Buffering:** Uses `asyncio.Queue` to decouple the high-speed game execution from the slower UI rendering and reasoning streams.
-* **Reasoning Sink:** Captures internal agent "thoughts" via callbacks and queues them for asynchronous consumption by the UI.
+### 2. Execution Management (`app_layer/execution/`)
+Manages the different modes in which a session can be processed.
+* **Managers (`/managers/`):** 
+    * **Controlled:** Designed for UIs; allows **Pausing** and **Step-by-Step** execution via asynchronous events.
+    * **Direct:** A simplified flow for continuous execution without manual intervention.
+* **Agent Evaluator (`evaluator.py`):** A benchmark simulation engine capable of running multiple sessions in parallel using independent processes.
 
-### 3. Session Builders (`session_builder.py`)
-Implements the **Builder Pattern** to abstract the complexity of instantiating and wiring a session.
-* **HumanSessionBuilder:** Configures a runner with a `HumanActor` and its corresponding input adapter.
-* **AgentSessionBuilder:** Configures a runner with an AI agent, injecting reasoning callbacks and LLM parameters.
+### 3. Session Building (`app_layer/building/`)
+Implements the **Builder Pattern** to abstract the complexity of instantiation.
+* **Session Builder:** Configures the runner by injecting the correct actors, input adapters, and game parameters.
+* **Registries:** An automated discovery system that locates available games and agents by scanning `manifest.py` files.
+
+### 4. I/O Adapters (`app_layer/io/`)
+Defines how information flows between the user and the system.
+* **Input Source:** Abstract interfaces for receiving user input (e.g., CLI, Gradio).
+* **Async InputB ridgee:** A synchronized buffer that allows data input from asynchronous interfaces (like Gradio) into the game loop safely.
 
 ---
 
-## 📊 Domain Events (`runner_types.py`)
+## 📊 Domain Events (`core/types.py`)
 
 To ensure the UI Layer remains agnostic to the game logic, all data is passed as standardized dataclasses:
 
 | Event | Yielded | Key Data |
 | :--- | :--- | :--- |
-| **`GameStart`** | Once (Start) | Initial scene description and game ID. |
-| **`GameTurn`** | Every turn | Action taken, resulting observation, and iteration count. |
-| **`GameResult`** | Once (End) | Final status (Finished/Failed) and full history log. |
+| **`GameStart`** | Once (Start) | Initial scene description, game name, and base score. |
+| **`GameTurn`** | Every turn | Action taken, engine response, and current score. |
+| **`GameResult`** | Once (End) | Final status (Finished/Failed) and full historical log. |
 
 ---
 
@@ -42,26 +48,34 @@ To ensure the UI Layer remains agnostic to the game logic, all data is passed as
 
 
 
-1.  **Configuration:** A `SessionConfig` object is passed to the `GameExecutionManager`.
-2.  **Assembly:** The `SessionBuilder` fetches the correct game and agent from their respective factories.
-3.  **Loop Initiation:** The `GameExecutionManager.start()` method begins consuming the runner's generator.
-4.  **Flow Control:** 
-    * In **Step mode**, the manager processes one yield and waits for a `_resume_event`.
-    * In **Play mode**, the manager processes yields continuously.
-5.  **Data Consumption:** The UI Layer polls `pop_pending_updates()` and `pop_reasoning()` to update the visual components.
-
+1. **Configuration:** A `SessionConfig` is received, defining the participants (Human/Agent) and the game environment.
+2. **Assembly:** The `SessionBuilder` resolves dependencies via the `Registry` and assembles the `GameRunner` with the appropriate `Actor` (the agent or human) and `CoreEngine` (the game).
+3. **Supervision:** An `ExecutionManager` (Direct or Controlled) wraps the runner to provide an interface tailored to the caller's execution requirements.
+4. **Orchestration:** The manager drives the `GameRunner` generator. During this phase, the App Layer manages the ping-pong of data: Observations are sent to Actors, and Actions are returned to the Game Engine.
+5. **Event Propagation:** Game events and internal reasoning (thoughts) are captured by the manager and propagated to the final consumer (UI components, CLI, or statistical aggregators).
 ---
 
 ## 📂 Directory Structure
 
 ```text
 app_layer/
-├── game_runner.py           # Core generator-based loop
-├── game_execution_manager.py # Flow control and Queue management
-├── session_builder.py       # Human and Agent factory logic
-├── session_config.py        # Unified configuration dataclass
-└── runner_types.py          # Standardized Domain Objects (Events)
+├── building/
+│   ├── session_builder.py
+│   └── session_config.py
+├── core/
+│   ├── game_runner.py
+│   └── runner_types.py
+├── execution/
+│   ├── managers/
+│   │   ├── controlled_execution_manager.py
+│   │   └── direct_execution_manager.py
+│   └── agent_evaluator.py
+├── io/
+│   ├── async_input_bridge.py
+│   └── input_source.py
+└── registries/
+    ├── discovery.py
+    ├── generic_registry.py
+    ├── manager.py
+    └── specs.py
 ```
-
----
-

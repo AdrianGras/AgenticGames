@@ -4,7 +4,7 @@ from typing import List, Any, Tuple, Optional
 from ui_layer.gradio.signals import SignalEmitter
 from ui_layer.gradio.layout_utils import TightCenteredLayout, VSpacer
 
-from app_layer.session_config import SessionConfig
+from app_layer.building.session_config import SessionConfig
 from app_layer.registries.manager import get_game_registry, get_agent_registry
 from .widget_factory import create_widget
 

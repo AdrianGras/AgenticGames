@@ -3,7 +3,7 @@ import sys
 from typing import Optional
 
 from app_layer.registries.manager import get_game_registry, get_agent_registry
-from app_layer.session_config import SessionConfig
+from app_layer.building.session_config import SessionConfig
 from .register_param import register_param
 from app_layer.registries.generic_registry import EntityManifest
 

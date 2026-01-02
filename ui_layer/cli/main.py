@@ -3,9 +3,9 @@ import os
 import asyncio
 import sys
 from ui_layer.cli.cli_session_configurator import CLISessionConfigurator
-from app_layer.direct_execution_manager import DirectExecutionManager
-from app_layer.runner_types import GameEvent, GameStart, GameTurn, GameResult
-from app_layer.input_source import InputSource
+from app_layer.execution.managers.direct_execution_manager import DirectExecutionManager
+from app_layer.core.runner_types import GameEvent, GameStart, GameTurn, GameResult
+from app_layer.io.input_source import InputSource
 
 
 
