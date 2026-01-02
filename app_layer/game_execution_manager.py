@@ -4,6 +4,7 @@ from typing import List, Optional, Union, Any
 from app_layer.session_config import SessionConfig
 from app_layer.runner_types import GameEvent, GameResult
 from app_layer.session_builder import AgentSessionBuilder, HumanSessionBuilder
+from app_layer.async_input_bridge import AsyncInputBridge
 
 # Type alias for cleaner signatures
 
@@ -25,7 +26,7 @@ class GameExecutionManager:
         """
         self.config = config
         
-        self._input_queue: asyncio.Queue[str] = asyncio.Queue()
+        self._input_adapter = AsyncInputBridge()
         self._output_queue: asyncio.Queue[GameEvent] = asyncio.Queue()
         self._reasoning_queue: asyncio.Queue[Any] = asyncio.Queue()
         
@@ -49,7 +50,7 @@ class GameExecutionManager:
         if self.config.is_human:
             return HumanSessionBuilder(
                 game_name=self.config.game_name,
-                input_adapter=self._input_queue,
+                input_adapter=self._input_adapter,
                 game_params=self.config.game_params
             ).build()
         else:
@@ -88,8 +89,6 @@ class GameExecutionManager:
 
                 await self._resume_event.wait()
                 
-                await asyncio.sleep(0.01)
-
         except Exception as e:
             await self._output_queue.put(GameResult(final_status=f"ERROR: {str(e)}"))
 
@@ -109,15 +108,21 @@ class GameExecutionManager:
             self._single_step_mode = True
             self._resume_event.set()
 
-    def enqueue_user_input(self, text: str) -> None:
+    def submit_user_input(self, text: str) -> bool:
         """
-        Adds user input to the runner's input queue.
+        Delivers user input directly to the awaiting actor.
         
         Args:
             text: The command or text input from the user interface.
+
+        Returns:
+            bool: True if the input was accepted by the current session, 
+                False if the system was not ready for input (rejected).
         """
-        if text:
-            self._input_queue.put_nowait(text)
+        if not text:
+            return False
+            
+        return self._input_adapter.set_input(text)
 
     async def pop_pending_updates(self) -> Optional[List[GameEvent]]:
         """
