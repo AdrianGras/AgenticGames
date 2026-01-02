@@ -1,7 +1,7 @@
 import gradio as gr
 from ui_layer.gradio.signals import SignalEmitter
 
-class MisterySequencesInputView(SignalEmitter):
+class MysterySequencesInputView(SignalEmitter):
 
     def __init__(self):
         super().__init__()
