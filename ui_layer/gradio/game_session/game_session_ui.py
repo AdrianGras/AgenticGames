@@ -93,7 +93,8 @@ class GameSessionUI:
         # D. Control UI Wiring
         if self.config.is_human:
             if isinstance(self.control_ui, SignalEmitter):
-                self.control_ui.on_signal(fn=self.manager.enqueue_user_input)
+                self.control_ui.on_signal(fn=self._submit_user_input)
+                   
         else:
             if isinstance(self.control_ui, AgentControlBaseUI):
                 self.control_ui.on_signal(fn=self._handle_agent_command)
@@ -104,6 +105,12 @@ class GameSessionUI:
                     fn_fetch=lambda x: x,
                     inputs=[self.reasoning_buffer]
                 )
+
+    def _submit_user_input(self, text: str) -> None:
+        is_submited = self.manager.submit_user_input(text)
+        if not is_submited:
+            gr.Warning("Input could not be submitted")
+        return 
 
     async def _kickstart_manager(self) -> gr.Timer:
         """
