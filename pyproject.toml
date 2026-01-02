@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-games"
+version = "0.1.0"
+description = "Framework for evaluating LLM agents in text-based games."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+dependencies = [
+    "openai",
+    "gradio==5.49.1",
+    "tqdm",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
