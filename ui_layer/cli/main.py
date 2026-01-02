@@ -47,4 +47,8 @@ def handle_event(event):
             print(f"\n--- Game Ended: {status} ---\nFinal Score: {score}")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n\n[!] Session interrupted by user. Exiting...")
+        sys.exit(0)
