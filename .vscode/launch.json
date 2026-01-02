@@ -11,7 +11,7 @@
             "args": [
                 "--game", "${input:gameName}",
                 "--agent", "${input:agentName}",
-                "--llm", "${input:llmName}"
+                "--a_llm", "${input:llmName}"
             ]
         },
         {
@@ -41,9 +41,9 @@
             "description": "Choose the game",
             "type": "pickString",
             "options": [
-                "mistery_sequences",
+                "mystery_sequences",
             ],
-            "default": "mistery_sequences"
+            "default": "mystery_sequences"
         },
         {
             "id": "agentName",

@@ -37,7 +37,7 @@ manifest = EntityManifest(
     ),
     params=[
         ChoiceParamSpec(
-            id="model_name",
+            id="llm",
             label="LLM Model",
             description="The backend model providing the reasoning capabilities.",
             choices=llms_list,
