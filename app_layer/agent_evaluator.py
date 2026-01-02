@@ -47,9 +47,9 @@ async def _run_logic(config: SessionConfig) -> tuple[Dict[int, float], float]:
                 
     return history, final_score
 
-class StatsRunner:
+class AgentEvaluator:
     """
-    Parallel Work Pool runner that executes game sessions using DirectExecutionManager.
+    Manages the execution of multiple game sessions for statistical evaluation.
     """
 
     def __init__(self, session_config: SessionConfig, total_runs: int = 100, max_workers: int = None):
