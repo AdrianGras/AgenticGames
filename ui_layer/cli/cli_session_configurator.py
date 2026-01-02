@@ -5,7 +5,8 @@ from typing import Optional
 
 from app_layer.registries.manager import get_game_registry, get_agent_registry
 from app_layer.session_config import SessionConfig
-from .cli_adapter import register_param
+from .register_param import register_param
+from app_layer.registries.generic_registry import EntityManifest
 
 class CLISessionConfigurator:
     """
@@ -70,7 +71,7 @@ class CLISessionConfigurator:
 
         return self._build_config(full_args, game_manifest, agent_manifest)
 
-    def _build_config(self, args: argparse.Namespace, game_manifest, agent_manifest) -> SessionConfig:
+    def _build_config(self, args: argparse.Namespace, game_manifest: EntityManifest, agent_manifest: EntityManifest) -> SessionConfig:
         """
         Transforms parsed CLI arguments into a clean domain SessionConfig object.
         """
