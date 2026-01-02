@@ -9,24 +9,32 @@ The App Layer serves as the primary bridge between the User Interface and the Do
 The application logic is divided into four main areas of responsibility:
 
 ### 1. Core Logic (`app_layer/core/`)
+
 Contains the fundamental and immutable elements of the game lifecycle.
+
 * **Game Runner (`runner.py`):** The heart of the execution. It implements an **Asynchronous Generator** pattern that orchestrates the turn-based loop.
 * **Domain Types (`types.py`):** Defines standardized data objects (`GameStart`, `GameTurn`, `GameResult`) ensuring the UI remains agnostic to internal logic.
 
 ### 2. Execution Management (`app_layer/execution/`)
+
 Manages the different modes in which a session can be processed.
-* **Managers (`/managers/`):** 
-    * **Controlled:** Designed for UIs; allows **Pausing** and **Step-by-Step** execution via asynchronous events.
-    * **Direct:** A simplified flow for continuous execution without manual intervention.
+
+* **Managers (`/managers/`):**
+  * **Controlled:** Designed for UIs; allows **Pausing** and **Step-by-Step** execution via asynchronous events.
+  * **Direct:** A simplified flow for continuous execution without manual intervention.
 * **Agent Evaluator (`evaluator.py`):** A benchmark simulation engine capable of running multiple sessions in parallel using independent processes.
 
 ### 3. Session Building (`app_layer/building/`)
+
 Implements the **Builder Pattern** to abstract the complexity of instantiation.
+
 * **Session Builder:** Configures the runner by injecting the correct actors, input adapters, and game parameters.
 * **Registries:** An automated discovery system that locates available games and agents by scanning `manifest.py` files.
 
 ### 4. I/O Adapters (`app_layer/io/`)
+
 Defines how information flows between the user and the system.
+
 * **Input Source:** Abstract interfaces for receiving user input (e.g., CLI, Gradio).
 * **Async InputB ridgee:** A synchronized buffer that allows data input from asynchronous interfaces (like Gradio) into the game loop safely.
 
@@ -46,13 +54,12 @@ To ensure the UI Layer remains agnostic to the game logic, all data is passed as
 
 ## 🔄 The Execution Lifecycle
 
-
-
 1. **Configuration:** A `SessionConfig` is received, defining the participants (Human/Agent) and the game environment.
 2. **Assembly:** The `SessionBuilder` resolves dependencies via the `Registry` and assembles the `GameRunner` with the appropriate `Actor` (the agent or human) and `CoreEngine` (the game).
 3. **Supervision:** An `ExecutionManager` (Direct or Controlled) wraps the runner to provide an interface tailored to the caller's execution requirements.
 4. **Orchestration:** The manager drives the `GameRunner` generator. During this phase, the App Layer manages the ping-pong of data: Observations are sent to Actors, and Actions are returned to the Game Engine.
 5. **Event Propagation:** Game events and internal reasoning (thoughts) are captured by the manager and propagated to the final consumer (UI components, CLI, or statistical aggregators).
+
 ---
 
 ## 📂 Directory Structure
