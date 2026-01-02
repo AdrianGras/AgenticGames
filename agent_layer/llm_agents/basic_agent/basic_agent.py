@@ -15,7 +15,7 @@ class BasicAgent(LLMAgent):
 
     def __init__(
         self, 
-        model_name: str = "grok-4-1-fast-non-reasoning", 
+        llm: str = "grok-4-1-fast-non-reasoning", 
         system_prompt_id: str = "check_hypothesis", 
         on_reasoning: Optional[ReasoningCallback] = None
     ):
@@ -27,7 +27,7 @@ class BasicAgent(LLMAgent):
             system_prompt_id (str): The key to look up in 'system_prompts.json'.
             on_reasoning (ReasoningCallback, optional): Hook for real-time UI streaming.
         """
-        super().__init__(model_name=model_name, on_reasoning=on_reasoning)
+        super().__init__(model_name=llm, on_reasoning=on_reasoning)
         
         self.message_history: List[Dict[str, str]] = []
         self.system_prompt = self._load_system_prompt(system_prompt_id)
