@@ -1,36 +1,35 @@
 import asyncio
-from typing import Optional
-
 from app_layer.input_source import InputSource
+
 class AsyncInputBridge(InputSource):
     """
-    Asynchronous bridge for human input, allowing non-blocking interaction
+    Asynchronous bridge for human input using a single-slot synchronized buffer.
+    
+    This implementation uses a Queue with maxsize=1 to safely bridge the UI 
+    and the Game Runner, preventing generator lifecycle errors.
     """
     def __init__(self):
-        self._pending_future: Optional[asyncio.Future[str]] = None
+        self._queue: asyncio.Queue[str] = asyncio.Queue(maxsize=1)
 
     async def get(self) -> str:
         """
-        Awaits input from an external source via the set_input method.
-        Returns:
-            str: The input text provided by the user.
+        Awaits the next input from the buffer.
         """
-        loop = asyncio.get_running_loop()
-        self._pending_future = loop.create_future()
-        
-        try:
-            return await self._pending_future
-        finally:
-            self._pending_future = None
+        return await self._queue.get()
 
     def set_input(self, text: str) -> bool:
         """
-        Sets the input text, fulfilling the pending future if it exists.
+        Attempts to deliver input to the bridge.
+        
         Args:
-            text (str): The input text to be provided.
+            text: The input string from the UI.
             
+        Returns:
+            bool: True if the input was accepted into the buffer, 
+                  False if the buffer is full (previous input not consumed).
         """
-        if self._pending_future is not None and not self._pending_future.done():
-            self._pending_future.set_result(text)
+        try:
+            self._queue.put_nowait(text)
             return True
-        return False
+        except asyncio.QueueFull:
+            return False
