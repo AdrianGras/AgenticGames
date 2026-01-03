@@ -30,9 +30,8 @@ class CoreEngine(ABC):
         return initial_obs
 
     def step(self, input_data: str) -> str:
-        """
-        Advances the game by one turn.
-        """
+        """Advances the game by one turn."""
+        
         if self.game_status != GameStatus.RUNNING:
             return "Error: The game has already ended."
 
@@ -41,19 +40,21 @@ class CoreEngine(ABC):
         try:
             self.verify_input(input_data)
             self.consecutive_invalid_inputs = 0
+            new_obs = self.process_input(input_data)
+            
         except ValueError as e:
-            self.consecutive_invalid_inputs += 1
-            if self.consecutive_invalid_inputs >= MAX_INVALID_INPUTS:
-                self.game_status = GameStatus.FAILED
-                new_obs = "Too many invalid inputs. Aborting the game to avoid infinite loop."
-                self.observation_history.append(new_obs)
-                return new_obs
-            return str(e)
-        
-        new_obs = self.process_input(input_data)
+            new_obs = self._handle_invalid_input(str(e))
+
         self.observation_history.append(new_obs)
         return new_obs
-    
+
+    def _handle_invalid_input(self, error_msg: str) -> str:
+        self.consecutive_invalid_inputs += 1
+        if self.consecutive_invalid_inputs >= MAX_INVALID_INPUTS:
+            self.game_status = GameStatus.FAILED
+            return "Too many invalid inputs. Aborting the game to avoid infinite loop."
+        return error_msg
+
     def get_initial_observation(self) -> str:
         obs = f"Game '{self.name}' started.\n"
         obs += self.get_instructions()
