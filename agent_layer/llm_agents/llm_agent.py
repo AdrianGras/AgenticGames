@@ -47,10 +47,7 @@ class LLMAgent(AgentActor, ABC):
         match = re.search(pattern, response_text, flags=re.IGNORECASE | re.DOTALL)
 
         if not match:
-            # Fallback: Return the raw text. 
-            # This allows the Game Engine to decide if the raw output is a valid command 
-            # or if it should return an "Unknown command" error to the agent.
-            return response_text.strip()
+            return "" # Fallback to empty action if no match found
 
         return match.group(1).strip()
     
