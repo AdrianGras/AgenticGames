@@ -45,7 +45,9 @@ class CoreEngine(ABC):
             self.consecutive_invalid_inputs += 1
             if self.consecutive_invalid_inputs >= MAX_INVALID_INPUTS:
                 self.game_status = GameStatus.FAILED
-                return "Too many invalid inputs. Aborting the game to avoid infinite loop."
+                new_obs = "Too many invalid inputs. Aborting the game to avoid infinite loop."
+                self.observation_history.append(new_obs)
+                return new_obs
             return str(e)
         
         new_obs = self.process_input(input_data)
