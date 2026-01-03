@@ -137,15 +137,18 @@ class LevelBasedEngine(CoreEngine):
     
     def verify_input(self, input_data):
         super().verify_input(input_data)
-        if input_data[0] == "/":
-            command_parts = input_data.split()
-            command = command_parts[0]
-
-            assert command in ['/repeat', '/level'], f"Unknown command: {command}"
-            if command == '/level':
-                assert len(command_parts) > 1 and command_parts[1].isdigit(), "Command '/level' requires an integer argument"
-        else:
+        if len(input_data) == 0:
             self.verify_level_input(input_data)
+        else:
+            if input_data[0] == "/":
+                command_parts = input_data.split()
+                command = command_parts[0]
+
+                assert command in ['/repeat', '/level'], f"Unknown command: {command}"
+                if command == '/level':
+                    assert len(command_parts) > 1 and command_parts[1].isdigit(), "Command '/level' requires an integer argument"
+            else:
+                self.verify_level_input(input_data)
             
     @abstractmethod
     def verify_level_input(self, input_data):

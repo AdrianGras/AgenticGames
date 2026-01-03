@@ -116,7 +116,6 @@ class CLISessionConfigurator:
                 s.id: getattr(args, f"a_{s.id}") 
                 for s in agent_manifest.params
             }
-            agent_params["on_reasoning"] = lambda t: print(t, end="", flush=True)
 
         return SessionConfig(
             game_name=game_manifest.id,
